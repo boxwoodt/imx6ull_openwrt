@@ -28,3 +28,18 @@ define Device/technexion_imx7d-pico-pi
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += technexion_imx7d-pico-pi
+
+define Device/imx6ull-atk-emmc
+  DEVICE_VENDOR := Alientek
+  DEVICE_MODEL := atk-emmc
+  UBOOT := mx6ull_atk_mmc
+  DEVICE_DTS := imx6ull-atk-emmc
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb3 kmod-usb-ohci kmod-usb-uhci \
+		kmod-usb-wdm kmod-usb-core kmod-usb-hid kmod-usb-net \
+		kmod-usb-net-cdc-ether kmod-usb-net-cdc-mbim kmod-usb-net-cdc-subset
+  FILESYSTEMS := squashfs
+  IMAGES := combined.bin sysupgrade.bin
+  IMAGE/combined.bin := append-rootfs | pad-extra 128k | imx6ull-sdcard-raw-uboot
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += imx6ull-atk-emmc

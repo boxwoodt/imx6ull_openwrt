@@ -8,6 +8,9 @@ case "$board" in
 technexion,imx7d-pico-pi)
 	ucidef_set_interface_lan "eth0"
 	;;
+imx6ull-atk-emmc)
+	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+	;;
 *)
 	ucidef_set_interfaces_lan_wan "eth0" "eth1"
 	;;

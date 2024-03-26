@@ -1,0 +1,23 @@
+echo "ATK-imx6ull OpenWrt boot script"
+
+# Initial setup, avoid overwriting environment every boot
+# if test ${bootm_boot_mode} != nonsec; then setenv bootm_boot_mode nonsec; setenv bootcmd run bootcmd_mmc0; saveenv; fi
+
+# Set console variable for both UART and HDMI
+setenv console "console=ttymxc0,115200 console=tty0"
+setenv fdt_name imx6ull-atk-emmc.dtb
+setenv mmcdev 0
+setenv mmcrootpart 2
+setenv kernel_addr_r 0x80800000
+setenv fdt_addr_r 0x83000000
+part uuid mmc ${mmcdev}:${mmcrootpart} uuid
+
+# Set correct devtype and partition
+if test ${devtype} != mmc; then setenv devtype mmc; fi
+
+# Boot from eMMC is the only supported option
+setenv bootargs "${console} root=PARTUUID=${uuid} rw rootwait"
+mmc dev ${mmcdev}
+load ${devtype} ${mmcdev}:1 ${kernel_addr_r} /uImage
+load ${devtype} ${mmcdev}:1 ${fdt_addr_r} /${fdt_name}
+bootm ${kernel_addr_r} - ${fdt_addr_r}

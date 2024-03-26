@@ -219,6 +219,18 @@ generate_network() {
 	esac
 }
 
+generate_4g_network() {
+	uci -q batch <<-EOF
+		delete network.qmi
+		set network.qmi='interface'
+		set network.qmi.proto='qmi'
+		set network.qmi.device='/dev/cdc-wdm0'
+		set network.qmi.pdptype='ipv4'
+		set network.qmi.qpn='cmnet'
+		set network.qmi.auth='none'
+	EOF
+}
+
 generate_switch_vlans_ports() {
 	local switch="$1"
 	local port ports role roles num attr val
@@ -524,6 +536,8 @@ if [ ! -s /etc/config/network ]; then
 
 	json_get_keys keys switch
 	for key in $keys; do generate_switch $key; done
+
+	generate_4g_network
 fi
 
 if [ ! -s /etc/config/system ]; then

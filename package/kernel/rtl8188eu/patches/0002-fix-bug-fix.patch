@@ -1,0 +1,185 @@
+From af7b2f16be57c6d73947b406fb8cb8d6045562d7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E7=8B=AE=E5=AD=90=E6=98=AFLION?= <beiyongmail@foxmail.com>
+Date: Tue, 26 Mar 2024 13:56:13 +0800
+Subject: [PATCH] fix: bug fix
+
+---
+ Makefile                      |  2 +-
+ os_dep/linux/ioctl_cfg80211.c | 26 +++++++-------------------
+ os_dep/linux/os_intfs.c       |  6 +++---
+ 3 files changed, 11 insertions(+), 23 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 6c26a0b..9bd53a0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -109,7 +109,7 @@ endif
+ CONFIG_RTW_DEBUG = y
+ # default log level is _DRV_INFO_ = 4,
+ # please refer to "How_to_set_driver_debug_log_level.doc" to set the available level.
+-CONFIG_RTW_LOG_LEVEL = 4
++CONFIG_RTW_LOG_LEVEL = 3
+ 
+ # enable /proc/net/rtlxxxx/ debug interfaces
+ CONFIG_PROC_DEBUG = y
+diff --git a/os_dep/linux/ioctl_cfg80211.c b/os_dep/linux/ioctl_cfg80211.c
+index bf2f5a5..9e3af04 100644
+--- a/os_dep/linux/ioctl_cfg80211.c
++++ b/os_dep/linux/ioctl_cfg80211.c
+@@ -468,7 +468,7 @@ u8 rtw_cfg80211_ch_switch_notify(_adapter *adapter, u8 ch, u8 bw, u8 offset,
+ 		 *  called by others with block-tx.
+ 		 */
+ 
+-		cfg80211_ch_switch_started_notify(adapter->pnetdev, &chdef, 0, false);
++		cfg80211_ch_switch_started_notify(adapter->pnetdev, &chdef, 0, 0, false);
+ #else
+ 		cfg80211_ch_switch_started_notify(adapter->pnetdev, &chdef, 0);
+ #endif
+@@ -484,7 +484,7 @@ u8 rtw_cfg80211_ch_switch_notify(_adapter *adapter, u8 ch, u8 bw, u8 offset,
+ 	cfg80211_ch_switch_notify(adapter->pnetdev, &chdef, 0);
+ #endif
+ #else
+-	cfg80211_ch_switch_notify(adapter->pnetdev, &chdef);
++	cfg80211_ch_switch_notify(adapter->pnetdev, &chdef, 0);
+ #endif
+ 
+ #else
+@@ -1152,7 +1152,7 @@ check_bss:
+ 		#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0))
+ 		roam_info.links[0].bssid = cur_network->network.MacAddress;
+ 		#else
+-		roam_info.bssid = cur_network->network.MacAddress;
++		roam_info.links[0].bssid = cur_network->network.MacAddress;
+ 		#endif
+ 		roam_info.req_ie = pmlmepriv->assoc_req + sizeof(struct rtw_ieee80211_hdr_3addr) + 2;
+ 		roam_info.req_ie_len = pmlmepriv->assoc_req_len - sizeof(struct rtw_ieee80211_hdr_3addr) - 2;
+@@ -1913,9 +1913,7 @@ exit:
+ }
+ 
+ static int cfg80211_rtw_add_key(struct wiphy *wiphy, struct net_device *ndev
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
+ 	, int link_id
+-#endif
+ 	, u8 key_index
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37)) || defined(COMPAT_KERNEL_RELEASE)
+ 	, bool pairwise
+@@ -2078,9 +2076,7 @@ addkey_end:
+ }
+ 
+ static int cfg80211_rtw_get_key(struct wiphy *wiphy, struct net_device *ndev
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
+ 	, int link_id
+-#endif
+ 	, u8 keyid
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37)) || defined(COMPAT_KERNEL_RELEASE)
+ 	, bool pairwise
+@@ -2269,9 +2265,7 @@ exit:
+ }
+ 
+ static int cfg80211_rtw_del_key(struct wiphy *wiphy, struct net_device *ndev,
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
+ 				int link_id,
+-#endif
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37)) || defined(COMPAT_KERNEL_RELEASE)
+ 				u8 key_index, bool pairwise, const u8 *mac_addr)
+ #else	/* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37)) */
+@@ -2292,9 +2286,7 @@ static int cfg80211_rtw_del_key(struct wiphy *wiphy, struct net_device *ndev,
+ }
+ 
+ static int cfg80211_rtw_set_default_key(struct wiphy *wiphy, struct net_device *ndev,
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
+ 	int link_id,
+-#endif
+ 	u8 key_index
+ 	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 38)) || defined(COMPAT_KERNEL_RELEASE)
+ 	, bool unicast, bool multicast
+@@ -2343,9 +2335,7 @@ static int cfg80211_rtw_set_default_key(struct wiphy *wiphy, struct net_device *
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
+ int cfg80211_rtw_set_default_mgmt_key(struct wiphy *wiphy, struct net_device *ndev,
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
+ 	int link_id,
+-#endif
+ 	u8 key_index)
+ {
+ #define SET_DEF_KEY_PARAM_FMT " key_index=%d"
+@@ -5060,7 +5050,7 @@ static int rtw_cfg80211_add_monitor_if(_adapter *padapter, char *name, struct ne
+ 	mon_wdev->iftype = NL80211_IFTYPE_MONITOR;
+ 	mon_ndev->ieee80211_ptr = mon_wdev;
+ 
+-	ret = register_netdevice(mon_ndev);
++	ret = cfg80211_register_netdevice(mon_ndev);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -5409,7 +5399,7 @@ static int cfg80211_rtw_change_beacon(struct wiphy *wiphy, struct net_device *nd
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2))
+ static int cfg80211_rtw_stop_ap(struct wiphy *wiphy, struct net_device *ndev, unsigned int link_id)
+ #else
+-static int cfg80211_rtw_stop_ap(struct wiphy *wiphy, struct net_device *ndev)
++static int cfg80211_rtw_stop_ap(struct wiphy *wiphy, struct net_device *ndev, unsigned int link_id)
+ #endif
+ {
+ 	_adapter *adapter = (_adapter *)rtw_netdev_priv(ndev);
+@@ -6759,7 +6749,7 @@ static int cfg80211_rtw_del_virtual_intf(struct wiphy *wiphy,
+ 		pwdev_priv = adapter_wdev_data(adapter);
+ 
+ 		if (ndev == pwdev_priv->pmon_ndev) {
+-			unregister_netdevice(ndev);
++			cfg80211_unregister_netdevice(ndev);
+ 			pwdev_priv->pmon_ndev = NULL;
+ 			pwdev_priv->ifname_mon[0] = '\0';
+ 			RTW_INFO(FUNC_NDEV_FMT" remove monitor ndev\n", FUNC_NDEV_ARG(ndev));
+@@ -6791,9 +6781,7 @@ exit:
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
+ static int cfg80211_rtw_get_channel(struct wiphy *wiphy,
+ 	struct wireless_dev *wdev,
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2))
+ 	unsigned int link_id,
+-#endif
+ 	struct cfg80211_chan_def *chandef)
+ {
+ 	_adapter *padapter = wiphy_to_adapter(wiphy);
+@@ -10735,7 +10723,7 @@ void rtw_wdev_unregister(struct wireless_dev *wdev)
+ 	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 2))
+ 	if (wdev->links[0].client.current_bss) {
+ 	#else
+-	if (wdev->current_bss) {
++	if (wdev->links[0].client.current_bss) {
+ 	#endif
+ 		RTW_INFO(FUNC_ADPT_FMT" clear current_bss by cfg80211_disconnected\n", FUNC_ADPT_ARG(adapter));
+ 		rtw_cfg80211_indicate_disconnect(adapter, 0, 1);
+diff --git a/os_dep/linux/os_intfs.c b/os_dep/linux/os_intfs.c
+index ab147a4..0a0e961 100644
+--- a/os_dep/linux/os_intfs.c
++++ b/os_dep/linux/os_intfs.c
+@@ -2157,7 +2157,7 @@ int rtw_os_ndev_register(_adapter *adapter, const char *name)
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0))
+ 	netif_napi_add_weight(ndev, &adapter->napi, rtw_recv_napi_poll, RTL_NAPI_WEIGHT);
+ #else
+-	netif_napi_add(ndev, &adapter->napi, rtw_recv_napi_poll, RTL_NAPI_WEIGHT);
++	backport_netif_napi_add(ndev, &adapter->napi, rtw_recv_napi_poll);
+ #endif
+ #endif /* CONFIG_RTW_NAPI */
+ 
+@@ -2189,7 +2189,7 @@ int rtw_os_ndev_register(_adapter *adapter, const char *name)
+ 	if (rtnl_lock_needed)
+ 		ret = (register_netdev(ndev) == 0) ? _SUCCESS : _FAIL;
+ 	else
+-		ret = (register_netdevice(ndev) == 0) ? _SUCCESS : _FAIL;
++		ret = (cfg80211_register_netdevice(ndev) == 0) ? _SUCCESS : _FAIL;
+ 
+ 	if (ret == _SUCCESS)
+ 		adapter->registered = 1;
+@@ -2238,7 +2238,7 @@ void rtw_os_ndev_unregister(_adapter *adapter)
+ 		if (rtnl_lock_needed)
+ 			unregister_netdev(netdev);
+ 		else
+-			unregister_netdevice(netdev);
++			cfg80211_unregister_netdevice(netdev);
+ 	}
+ 
+ #if defined(CONFIG_IOCTL_CFG80211) && !defined(RTW_SINGLE_WIPHY)
+-- 
+2.25.1
+

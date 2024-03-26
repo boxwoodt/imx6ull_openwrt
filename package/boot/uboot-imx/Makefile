@@ -44,6 +44,12 @@ define U-Boot/pico-pi-imx7d
   BUILD_DEVICES:=technexion_imx7d-pico-pi
 endef
 
+define U-Boot/mx6ull_atk_mmc
+  NAME:=ATK EMMC-IMX6ULL
+  BUILD_SUBTARGET:=cortexa7
+  BUILD_DEVICES:=mx6ull_atk_mmc
+endef
+
 define U-Boot/wandboard
   NAME:=Wandboard Dual Lite/Quad/Solo
   BUILD_SUBTARGET:=cortexa9
@@ -54,6 +60,7 @@ UBOOT_TARGETS := \
 	apalis_imx6 \
 	mx6cuboxi \
 	pico-pi-imx7d \
+  mx6ull_atk_mmc \
 	wandboard
 
 UBOOT_MAKE_FLAGS += u-boot.imx

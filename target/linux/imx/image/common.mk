@@ -59,3 +59,12 @@ define Build/imx-sdcard-raw-uboot
 
 	$(Build/imx-combined-image-clean)
 endef
+
+define Build/imx6ull-sdcard-raw-uboot
+	$(Build/imx-combined-image-prepare)
+
+	$(Build/imx-combined-image)
+	dd if=$(STAGING_DIR_IMAGE)/$(UBOOT)-u-boot.imx of=$@ bs=1024 seek=1 conv=notrunc
+
+	$(Build/imx-combined-image-clean)
+endef

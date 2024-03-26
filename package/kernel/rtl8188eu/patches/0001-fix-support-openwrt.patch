@@ -1,0 +1,53 @@
+From fa22f4b0b1e18f5be27922bcaf5c799cb3cb3e78 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E7=8B=AE=E5=AD=90=E6=98=AFLION?= <beiyongmail@foxmail.com>
+Date: Mon, 25 Mar 2024 22:59:08 +0800
+Subject: [PATCH] fix: support openwrt
+
+---
+ Makefile                                                | 2 +-
+ include/drv_conf.h                                      | 3 ++-
+ include/linux/{wireless.h => old_unused_rtl_wireless.h} | 0
+ include/{autoconf.h => rtl_autoconf.h}                  | 0
+ 4 files changed, 3 insertions(+), 2 deletions(-)
+ rename include/linux/{wireless.h => old_unused_rtl_wireless.h} (100%)
+ rename include/{autoconf.h => rtl_autoconf.h} (100%)
+
+diff --git a/Makefile b/Makefile
+index 3d08dac..6c26a0b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -142,7 +142,7 @@ CONFIG_LAYER2_ROAMING = y
+ #bit0: ROAM_ON_EXPIRED, #bit1: ROAM_ON_RESUME, #bit2: ROAM_ACTIVE
+ CONFIG_ROAMING_FLAG = 0x3
+ ###################### Platform Related #######################
+-CONFIG_PLATFORM_I386_PC = y
++CONFIG_PLATFORM_I386_PC = n
+ CONFIG_PLATFORM_RPI_ARM = n
+ CONFIG_PLATFORM_RPI_ARM64 = n
+ CONFIG_PLATFORM_ANDROID_X86 = n
+diff --git a/include/drv_conf.h b/include/drv_conf.h
+index 22088bc..5d2274e 100644
+--- a/include/drv_conf.h
++++ b/include/drv_conf.h
+@@ -14,8 +14,9 @@
+  *****************************************************************************/
+ #ifndef __DRV_CONF_H__
+ #define __DRV_CONF_H__
+-#include "autoconf.h"
++#include "rtl_autoconf.h"
+ #include "hal_ic_cfg.h"
++#include <generated/autoconf.h>
+ 
+ #define CONFIG_RSSI_PRIORITY
+ 
+diff --git a/include/linux/wireless.h b/include/linux/old_unused_rtl_wireless.h
+similarity index 100%
+rename from include/linux/wireless.h
+rename to include/linux/old_unused_rtl_wireless.h
+diff --git a/include/autoconf.h b/include/rtl_autoconf.h
+similarity index 100%
+rename from include/autoconf.h
+rename to include/rtl_autoconf.h
+-- 
+2.25.1
+
