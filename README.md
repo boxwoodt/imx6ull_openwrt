@@ -57,7 +57,11 @@ make V=s > make.log 2>&1
 
 ## 4、固件烧录
 
-通过`balenaEtcher`软件，将固件烧录到SD卡中。下载地址为https://etcher.balena.io/#download-etcher。
+通过`balenaEtcher`软件，将固件烧录到SD卡中。
+
+烧录软件下载地址：https://etcher.balena.io/#download-etcher。
+
+IMX6ULL固件地址：https://github.com/boxwoodt/imx6ull_openwrt/releases/download/v1.0/openwrt-23.05-snapshot-r0+23781-0844937947-imx-cortexa7-imx6ull-atk-emmc-squashfs-combined.bin。
 
 ![](https://github.com/boxwoodt/imx6ull_openwrt/blob/imx6ull_openwrt/doc/img/firmware_burn.png?raw=true)
 
