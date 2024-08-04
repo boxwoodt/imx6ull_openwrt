@@ -5,12 +5,12 @@ Subject: [PATCH] fix: support atk board
 
 ---
  arch/arm/boot/dts/Makefile              |   1 +
- arch/arm/boot/dts/imx6ull-atk-emmc.dts  | 466 +++++++++++++++++++
- arch/arm/configs/imx_atk_emmc_defconfig | 594 ++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ull-atk-mmc.dts   | 466 +++++++++++++++++++
+ arch/arm/configs/imx_atk_mmc_defconfig  | 594 ++++++++++++++++++++++++
  build.sh                                |  20 +
  4 files changed, 1081 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ull-atk-emmc.dts
- create mode 100644 arch/arm/configs/imx_atk_emmc_defconfig
+ create mode 100644 arch/arm/boot/dts/imx6ull-atk-mmc.dts
+ create mode 100644 arch/arm/configs/imx_atk_mmc_defconfig
  create mode 100755 build.sh
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
@@ -21,15 +21,15 @@ index 12ce9965f55b..dea3f002e618 100644
 	imx6ul-14x14-evk.dtb \
 	imx6ul-ccimx6ulsbcexpress.dtb \
 	imx6ul-ccimx6ulsbcpro.dtb \
-+	imx6ull-atk-emmc.dtb \
++	imx6ull-atk-mmc.dtb \
 	imx6ul-geam.dtb \
 	imx6ul-isiot-emmc.dtb \
 	imx6ul-isiot-nand.dtb \
-diff --git a/arch/arm/boot/dts/imx6ull-atk-emmc.dts b/arch/arm/boot/dts/imx6ull-atk-emmc.dts
+diff --git a/arch/arm/boot/dts/imx6ull-atk-mmc.dts b/arch/arm/boot/dts/imx6ull-atk-mmc.dts
 new file mode 100644
 index 000000000000..607834bc1260
 --- /dev/null
-+++ b/arch/arm/boot/dts/imx6ull-atk-emmc.dts
++++ b/arch/arm/boot/dts/imx6ull-atk-mmc.dts
 @@ -0,0 +1,466 @@
 +/*
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
@@ -46,7 +46,7 @@ index 000000000000..607834bc1260
 +
 +/ {
 +	model = "Freescale ATK IMX6ULL Board";
-+	compatible = "imx6ull-atk-emmc", "fsl,imx6ull";
++	compatible = "imx6ull-atk-mmc", "fsl,imx6ull";
 +
 +	chosen {
 +		stdout-path = &uart1;
@@ -497,11 +497,11 @@ index 000000000000..607834bc1260
 +	pinctrl-0 = <&pinctrl_wdog>;
 +	fsl,ext-reset-output;
 +};
-diff --git a/arch/arm/configs/imx_atk_emmc_defconfig b/arch/arm/configs/imx_atk_emmc_defconfig
+diff --git a/arch/arm/configs/imx_atk_mmc_defconfig b/arch/arm/configs/imx_atk_mmc_defconfig
 new file mode 100644
 index 000000000000..3f12be60be99
 --- /dev/null
-+++ b/arch/arm/configs/imx_atk_emmc_defconfig
++++ b/arch/arm/configs/imx_atk_mmc_defconfig
 @@ -0,0 +1,594 @@
 +CONFIG_SYSVIPC=y
 +CONFIG_POSIX_MQUEUE=y
@@ -1109,11 +1109,11 @@ index 000000000000..dea088db82ce
 +
 +make ARCH=arm CROSS_COMPILE=arm-openwrt-linux- distclean
 +# make ARCH=arm CROSS_COMPILE=arm-openwrt-linux- imx_v7_defconfig
-+make ARCH=arm CROSS_COMPILE=arm-openwrt-linux- imx_atk_emmc_defconfig
++make ARCH=arm CROSS_COMPILE=arm-openwrt-linux- imx_atk_mmc_defconfig
 +# make ARCH=arm CROSS_COMPILE=arm-openwrt-linux- menuconfig
 +make ARCH=arm CROSS_COMPILE=arm-openwrt-linux-
 +
-+cp ./arch/arm/boot/dts/imx6ull-atk-emmc.dtb ./atk/imx6ull-atk-emmc.dtb
++cp ./arch/arm/boot/dts/imx6ull-atk-mmc.dtb ./atk/imx6ull-atk-mmc.dtb
 +cp ./arch/arm/boot/zImage ./atk/zImage
 +
 +

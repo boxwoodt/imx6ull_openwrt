@@ -1,0 +1,16 @@
+diff --git a/include/configs/mx6ull_atk_mmc.h b/include/configs/mx6ull_atk_mmc.h
+index 496484e2a6..5eead06ada 100644
+--- a/include/configs/mx6ull_atk_mmc.h
++++ b/include/configs/mx6ull_atk_mmc.h
+@@ -105,6 +105,11 @@
+ 		"fi;\0" \
+ 
+ #define CONFIG_BOOTCOMMAND \
++		"if mmc dev 0; then "\
++			"setenv mmcdev 0; "\
++		"elif mmc dev 1; then "\
++			"setenv mmcdev 1; "\
++		"fi; "\
+ 	   "mmc dev ${mmcdev};" \
+ 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
+ 		   "if run loadbootscript; then " \
