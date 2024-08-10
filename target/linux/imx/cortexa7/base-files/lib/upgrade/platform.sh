@@ -7,7 +7,7 @@ enable_image_metadata_check() {
 	technexion,imx7d-pico-pi)
 		REQUIRE_IMAGE_METADATA=1
 		;;
-	imx6ull-atk-emmc)
+	imx6ull-atk-mmc)
 		REQUIRE_IMAGE_METADATA=1
 		;;		
 	esac
@@ -21,7 +21,7 @@ platform_check_image() {
 	technexion,imx7d-pico-pi)
 		return 0
 		;;
-	imx6ull-atk-emmc)
+	imx6ull-atk-mmc)
 		return 0
 		;;
 	esac
@@ -37,7 +37,7 @@ platform_do_upgrade() {
 	technexion,imx7d-pico-pi)
 		imx_sdcard_do_upgrade "$1"
 		;;
-	imx6ull-atk-emmc)
+	imx6ull-atk-mmc)
 		imx_sdcard_do_upgrade "$1"
 		;;	
 	esac
@@ -50,7 +50,7 @@ platform_copy_config() {
 	technexion,imx7d-pico-pi)
 		imx_sdcard_copy_config
 		;;
-	imx6ull-atk-emmc)
+	imx6ull-atk-mmc)
 		imx_sdcard_copy_config
 		;;
 	esac
@@ -63,7 +63,7 @@ platform_pre_upgrade() {
 	technexion,imx7d-pico-pi)
 		imx_sdcard_pre_upgrade
 		;;
-	imx6ull-atk-emmc)
+	imx6ull-atk-mmc)
 		imx_sdcard_pre_upgrade
 		;;
 	esac

@@ -8,35 +8,35 @@
 
 2. 将 uboot 固件拷贝到运行的 OpenWRT 系统中。可以通过 scp 命令方式或者 MobaXterm 传输方式，这里不在详细介绍。scp 指令方式示例，其中 192.168.6.102 为开发板地址：
 
-    ```shell
-    cd bin/targets/imx/cortexa7/u-boot-mx6ull_atk_mmc
-    scp u-boot.imx root@192.168.6.102:/root
-    ```
+```shell
+cd bin/targets/imx/cortexa7/u-boot-mx6ull_atk_mmc
+scp u-boot.imx root@192.168.6.102:/root
+```
 
 3. 指定的 MMC 块设备 mmcblk1boot0 ，设置为读写模式
 
-    ```shell
-    echo 0 > /sys/block/mmcblk1boot0/force_ro
-    ```
+```shell
+echo 0 > /sys/block/mmcblk1boot0/force_ro
+```
 
 4. 把当前目录下的 uboot 固件烧写至 eMMC 的启动分区
 
-    ```shell
-    dd if=u-boot.imx of=/dev/mmcblk1boot0 bs=1024 seek=1 conv=fsync
-    ```
+```shell
+dd if=u-boot.imx of=/dev/mmcblk1boot0 bs=1024 seek=1 conv=fsync
+```
 
 5.  烧写完成后，关闭要烧写的启动分区
 
-    ```shell
-    echo 1 >/sys/block/mmcblk1boot0/force_ro
-    ```
+```shell
+echo 1 >/sys/block/mmcblk1boot0/force_ro
+```
 
 ## 2、删除 eMMC 原有分区
 
 以下操作需要登录终端操作，我们可以使用 ssh 软件登录，也可使用串口登录。
 
 ```shell
-fdisk mmcblk1
+fdisk /dev/mmcblk1
 p
 d
 d

@@ -9,7 +9,7 @@ move_config() {
 	technexion,imx7d-pico-pi)
 		imx_sdcard_move_config
 		;;
-	imx6ull-atk-emmc)
+	imx6ull-atk-mmc)
 		imx_sdcard_move_config
 		;;
 	esac

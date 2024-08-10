@@ -180,6 +180,12 @@ generate_network() {
 			# fixup IPv6 slave interface if parent is a bridge
 			[ "$type" = "bridge" ] && device="br-$1"
 
+			[ "$1" = "wan" ] && {
+				uci -q batch <<-EOF
+					set network.$1.metric='0'
+				EOF
+			}
+
 			uci set network.$1.proto='dhcp'
 			[ -e /proc/sys/net/ipv6 ] && {
 				uci -q batch <<-EOF
@@ -221,13 +227,11 @@ generate_network() {
 
 generate_4g_network() {
 	uci -q batch <<-EOF
-		delete network.qmi
-		set network.qmi='interface'
-		set network.qmi.proto='qmi'
-		set network.qmi.device='/dev/cdc-wdm0'
-		set network.qmi.pdptype='ipv4'
-		set network.qmi.qpn='cmnet'
-		set network.qmi.auth='none'
+		delete network.wan_4g
+		set network.wan_4g='interface'
+		set network.wan_4g.proto='dhcp'
+		set network.wan_4g.device='usb0'
+		set network.wan_4g.metric='1'
 	EOF
 }
 
